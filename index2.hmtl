@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valet PRO</title>
+
+<style>
+body{
+  font-family: Arial;
+  background:#f4f4f4;
+  padding:15px;
+}
+
+h1{
+  margin-bottom:10px;
+}
+
+.box{
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+
+input, select{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+}
+
+button{
+  padding:10px;
+  border:none;
+  border-radius:6px;
+  color:white;
+  cursor:pointer;
+}
+
+.azul{background:#1976d2;}
+.verde{background:#2e7d32;}
+.rojo{background:#c62828;}
+.naranja{background:#f9a825;}
+.morado{background:#6a1b9a;}
+
+.item{
+  background:#fff;
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:8px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Valet Agua Verde PRO</h1>
+
+<div class="box">
+  <input id="numero" placeholder="Número de ticket">
+  
+  <select id="estado">
+    <option value="">Estado</option>
+    <option>Estacionado</option>
+    <option>Solicitado</option>
+    <option>Entregado</option>
+  </select>
+
+  <select id="llave">
+    <option value="">Ubicación de llave</option>
+    <option>Llave en cajón</option>
+    <option>Llave colgada</option>
+    <option>Llave con dueño</option>
+    <option>Sin llave</option>
+  </select>
+
+  <button class="azul" onclick="guardar()">Guardar vehículo</button>
+</div>
+
+<div class="box">
+  <h3>Vehículos</h3>
+  <div id="lista"></div>
+</div>
+
+<script>
+
+let data = JSON.parse(localStorage.getItem("valet")) || [];
+
+function guardar(){
+  const numero = document.getElementById("numero").value;
+  const estado = document.getElementById("estado").value;
+  const llave = document.getElementById("llave").value;
+
+  if(!numero){
+    alert("Ingresá número");
+    return;
+  }
+
+  data.push({numero, estado, llave});
+  localStorage.setItem("valet", JSON.stringify(data));
+
+  document.getElementById("numero").value = "";
+  render();
+}
+
+function render(){
+  const lista = document.getElementById("lista");
+  lista.innerHTML = "";
+
+  data.forEach((v,i)=>{
+    lista.innerHTML += `
+      <div class="item">
+        <b>#${v.numero}</b><br>
+        Estado: ${v.estado || "-"}<br>
+        Llave: ${v.llave || "-"}<br><br>
+        <button class="rojo" onclick="eliminar(${i})">Eliminar</button>
+      </div>
+    `;
+  });
+}
+
+function eliminar(i){
+  data.splice(i,1);
+  localStorage.setItem("valet", JSON.stringify(data));
+  render();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
