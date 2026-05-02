@@ -3,130 +3,122 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Valet PRO</title>
+<title>Valet Agua Verde PRO</title>
 
 <style>
-body{
+body {
   font-family: Arial;
   background:#f4f4f4;
   padding:15px;
 }
-
-h1{
-  margin-bottom:10px;
-}
-
-.box{
-  background:white;
+.container {
+  background:#fff;
   padding:15px;
   border-radius:10px;
-  margin-bottom:15px;
 }
-
-input, select{
+input, select, button {
   width:100%;
   padding:10px;
-  margin-bottom:10px;
+  margin:5px 0;
 }
-
-button{
-  padding:10px;
+button {
   border:none;
   border-radius:6px;
-  color:white;
-  cursor:pointer;
+  color:#fff;
+  font-weight:bold;
 }
+.btn-save {background:#3498db;}
+.btn-green {background:#27ae60;}
+.btn-yellow {background:#f1c40f;}
+.btn-red {background:#e74c3c;}
+.btn-purple {background:#6c5ce7;}
 
-.azul{background:#1976d2;}
-.verde{background:#2e7d32;}
-.rojo{background:#c62828;}
-.naranja{background:#f9a825;}
-.morado{background:#6a1b9a;}
-
-.item{
-  background:#fff;
+.car {
+  background:#fafafa;
   padding:10px;
-  border-radius:8px;
-  margin-bottom:8px;
+  margin-top:10px;
+  border-radius:6px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>Valet Agua Verde PRO</h1>
+<div class="container">
+<h2>Valet Agua Verde PRO</h2>
 
-<div class="box">
-  <input id="numero" placeholder="Número de ticket">
-  
-  <select id="estado">
-    <option value="">Estado</option>
-    <option>Estacionado</option>
-    <option>Solicitado</option>
-    <option>Entregado</option>
-  </select>
+<input id="ticket" placeholder="Número de ticket">
 
-  <select id="llave">
-    <option value="">Ubicación de llave</option>
-    <option>Llave en cajón</option>
-    <option>Llave colgada</option>
-    <option>Llave con dueño</option>
-    <option>Sin llave</option>
-  </select>
+<select id="estado">
+<option>Estacionado</option>
+<option>Solicitado</option>
+<option>Entregado</option>
+</select>
 
-  <button class="azul" onclick="guardar()">Guardar vehículo</button>
-</div>
+<select id="llave">
+<option>Llave en cajón</option>
+<option>Llave colgada</option>
+<option>Llave con dueño</option>
+<option>Sin llave</option>
+</select>
 
-<div class="box">
-  <h3>Vehículos</h3>
-  <div id="lista"></div>
+<button class="btn-save" onclick="guardar()">Guardar vehículo</button>
+
+<h3>Vehículos</h3>
+<div id="lista"></div>
 </div>
 
 <script>
-
-let data = JSON.parse(localStorage.getItem("valet")) || [];
+let autos = JSON.parse(localStorage.getItem("autos")) || [];
 
 function guardar(){
-  const numero = document.getElementById("numero").value;
-  const estado = document.getElementById("estado").value;
-  const llave = document.getElementById("llave").value;
+  let ticket = document.getElementById("ticket").value;
+  let estado = document.getElementById("estado").value;
+  let llave = document.getElementById("llave").value;
 
-  if(!numero){
-    alert("Ingresá número");
-    return;
-  }
+  if(ticket === "") return alert("Ingresá ticket");
 
-  data.push({numero, estado, llave});
-  localStorage.setItem("valet", JSON.stringify(data));
+  autos.push({ticket, estado, llave});
+  localStorage.setItem("autos", JSON.stringify(autos));
 
-  document.getElementById("numero").value = "";
   render();
 }
 
 function render(){
-  const lista = document.getElementById("lista");
+  let lista = document.getElementById("lista");
   lista.innerHTML = "";
 
-  data.forEach((v,i)=>{
+  autos.forEach((a,i)=>{
     lista.innerHTML += `
-      <div class="item">
-        <b>#${v.numero}</b><br>
-        Estado: ${v.estado || "-"}<br>
-        Llave: ${v.llave || "-"}<br><br>
-        <button class="rojo" onclick="eliminar(${i})">Eliminar</button>
+      <div class="car">
+        Ticket: ${a.ticket}<br>
+        Estado: ${a.estado}<br>
+        Llave: ${a.llave}<br><br>
+
+        <button class="btn-green" onclick="cambiar(${i},'Estacionado')">Estacionado</button>
+        <button class="btn-yellow" onclick="cambiar(${i},'Solicitado')">Solicitado</button>
+        <button class="btn-red" onclick="cambiar(${i},'Entregado')">Entregado</button>
+        <br><br>
+
+        <button class="btn-purple" onclick="eliminar(${i})">Eliminar</button>
       </div>
     `;
   });
 }
 
+function cambiar(i,estado){
+  autos[i].estado = estado;
+  localStorage.setItem("autos", JSON.stringify(autos));
+  render();
+}
+
 function eliminar(i){
-  data.splice(i,1);
-  localStorage.setItem("valet", JSON.stringify(data));
+  autos.splice(i,1);
+  localStorage.setItem("autos", JSON.stringify(autos));
   render();
 }
 
 render();
-
 </script>
 
 </body>
